@@ -140,10 +140,30 @@ body {
 
 .add-todo-form {
   display: flex;
+  align-items: flex-end;
   gap: 8px;
   padding: 14px 32px;
-  border-bottom: 1px solid var(--border);
   background: var(--surface);
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #c53030;
+  min-height: 1em;
+}
+
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.add-todo-form input[aria-invalid='true'],
+.modal input[aria-invalid='true'] {
+  border-color: #fc8181;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.2);
 }
 
 .add-todo-form input[type='text'] {
@@ -402,6 +422,12 @@ body {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.form-group input[aria-invalid='true']:focus,
+.form-group input[aria-invalid='true'] {
+  border-color: #fc8181;
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.2);
 }
 
 .btn-primary {

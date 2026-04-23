@@ -16,6 +16,16 @@ const projectTitle = document.getElementById('project-title');
 const todoList = document.getElementById('todo-list');
 const modal = document.getElementById('modal');
 const modalOverlay = document.getElementById('modal-overlay');
+const newTodoDue = document.getElementById('new-todo-due');
+const modalTitleInput = document.getElementById('modal-title');
+const modalDueInput = document.getElementById('modal-due');
+const todoTitleError = document.getElementById('new-todo-title-error');
+const modalTitleError = document.getElementById('modal-title-error');
+const modalDueError = document.getElementById('modal-due-error');
+
+const today = format(new Date(), 'yyyy-MM-dd');
+newTodoDue.min = today;
+modalDueInput.min = today;
 
 const renderProjects = () => {
   projectList.innerHTML = '';
@@ -134,17 +144,30 @@ const openModal = (todo) => {
   document.getElementById('modal-id').value = todo.id;
   document.getElementById('modal-title').value = todo.title;
   document.getElementById('modal-description').value = todo.description;
-  document.getElementById('modal-due').value = todo.dueDate;
+  document.getElementById('modal-due').value = todo.dueDate || today;
   document.getElementById('modal-priority').value = todo.priority;
   document.getElementById('modal-notes').value = todo.notes || '';
   modal.classList.add('open');
   modalOverlay.classList.add('open');
 };
 
+const clearModalError = () => {
+  modalTitleError.textContent = '';
+  modalTitleInput.setCustomValidity('');
+  modalTitleInput.removeAttribute('aria-invalid');
+  modalDueError.textContent = '';
+  modalDueInput.setCustomValidity('');
+  modalDueInput.removeAttribute('aria-invalid');
+};
+
 const closeModal = () => {
+  clearModalError();
   modal.classList.remove('open');
   modalOverlay.classList.remove('open');
 };
+
+modalTitleInput.addEventListener('input', clearModalError);
+modalDueInput.addEventListener('input', clearModalError);
 
 document.getElementById('add-project-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -157,27 +180,76 @@ document.getElementById('add-project-form').addEventListener('submit', (e) => {
   }
 });
 
+const todoTitleInput = document.getElementById('new-todo-title');
+
+const FIELD_ERROR_MSG = 'This field cannot be empty';
+
+const validateField = (field) => {
+  field.setCustomValidity('');
+  if (!field.checkValidity()) {
+    field.setCustomValidity(FIELD_ERROR_MSG);
+    return false;
+  }
+  return true;
+};
+
+const clearTodoFormError = () => {
+  todoTitleError.textContent = '';
+  todoTitleInput.setCustomValidity('');
+  todoTitleInput.removeAttribute('aria-invalid');
+};
+
+todoTitleInput.addEventListener('input', clearTodoFormError);
+
 document.getElementById('add-todo-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const title = document.getElementById('new-todo-title').value.trim();
-  const dueDateInput = document.getElementById('new-todo-due').value;
-  const dueDate = dueDateInput || format(new Date(), 'yyyy-MM-dd');
-  const priority = document.getElementById('new-todo-priority').value;
-  if (title) {
-    app.addTodo(title, '', dueDate, priority);
-    document.getElementById('new-todo-title').value = '';
-    document.getElementById('new-todo-due').value = '';
-    document.getElementById('new-todo-priority').value = 'medium';
-    render();
+  clearTodoFormError();
+
+  if (!validateField(todoTitleInput)) {
+    todoTitleError.textContent = todoTitleInput.validationMessage;
+    todoTitleInput.setAttribute('aria-invalid', 'true');
+    todoTitleInput.focus();
+    return;
   }
+
+  if (!validateField(newTodoDue)) {
+    newTodoDue.focus();
+    return;
+  }
+
+  const title = todoTitleInput.value.trim();
+  const dueDate = newTodoDue.value || format(new Date(), 'yyyy-MM-dd');
+  const priority = document.getElementById('new-todo-priority').value;
+
+  app.addTodo(title, '', dueDate, priority);
+  todoTitleInput.value = '';
+  newTodoDue.value = '';
+  document.getElementById('new-todo-priority').value = 'medium';
+  render();
 });
 
 document.getElementById('modal-save').addEventListener('click', () => {
+  clearModalError();
+
+  if (!validateField(modalTitleInput)) {
+    modalTitleError.textContent = modalTitleInput.validationMessage;
+    modalTitleInput.setAttribute('aria-invalid', 'true');
+    modalTitleInput.focus();
+    return;
+  }
+
+  if (!validateField(modalDueInput)) {
+    modalDueError.textContent = modalDueInput.validationMessage;
+    modalDueInput.setAttribute('aria-invalid', 'true');
+    modalDueInput.focus();
+    return;
+  }
+
   const id = document.getElementById('modal-id').value;
   app.updateTodo(id, {
-    title: document.getElementById('modal-title').value.trim(),
+    title: modalTitleInput.value.trim(),
     description: document.getElementById('modal-description').value.trim(),
-    dueDate: document.getElementById('modal-due').value,
+    dueDate: modalDueInput.value,
     priority: document.getElementById('modal-priority').value,
     notes: document.getElementById('modal-notes').value.trim(),
   });
