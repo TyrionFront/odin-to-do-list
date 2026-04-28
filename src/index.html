@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To-Do List</title>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <h2 class="sidebar-title">Projects</h2>
+        <ul id="project-list" class="project-list"></ul>
+        <form id="add-project-form" class="add-form">
+          <input id="new-project-name" placeholder="New project..." required />
+          <button type="submit" aria-label="Add project">+</button>
+        </form>
+      </aside>
+
+      <main class="main">
+        <header class="main-header">
+          <h1 id="project-title" class="project-title"></h1>
+        </header>
+
+        <form id="add-todo-form" class="add-todo-form" novalidate>
+          <div class="field-wrap">
+            <span id="new-todo-title-error" class="field-error" aria-live="polite"></span>
+            <input
+              id="new-todo-title"
+              placeholder="Add a new todo..."
+              required
+              minlength="2"
+              maxlength="100"
+              aria-describedby="new-todo-title-error"
+            />
+          </div>
+          <input id="new-todo-due" type="date" aria-label="Due date" />
+          <select id="new-todo-priority" aria-label="Priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button type="submit">Add</button>
+        </form>
+
+        <ul id="todo-list" class="todo-list"></ul>
+      </main>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay"></div>
+
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-heading">Edit Todo</h2>
+      <input type="hidden" id="modal-id" />
+
+      <div class="form-group">
+        <label for="modal-title">Title</label>
+        <span id="modal-title-error" class="field-error" aria-live="polite"></span>
+        <input id="modal-title" required minlength="2" maxlength="100" aria-describedby="modal-title-error" />
+      </div>
+
+      <div class="form-group">
+        <label for="modal-description">Description</label>
+        <textarea id="modal-description" rows="3" maxlength="500"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="modal-due">Due Date</label>
+        <span id="modal-due-error" class="field-error" aria-live="polite"></span>
+        <input id="modal-due" type="date" required aria-describedby="modal-due-error" />
+      </div>
+
+      <div class="form-group">
+        <label for="modal-priority">Priority</label>
+        <select id="modal-priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="modal-notes">Notes</label>
+        <textarea id="modal-notes" rows="3" maxlength="500"></textarea>
+      </div>
+
+      <button id="modal-save" class="btn-primary">Save</button>
+    </div>
+  </body>
+</html>
